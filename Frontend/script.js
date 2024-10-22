@@ -4,28 +4,61 @@ const recognition = new SpeechRecognition();
 recognition.interimResults = true;
 recognition.lang = 'en-US';
 
+// Initial voice recognition to activate the system on "Hello UPI"
+const keywordRecognition = new SpeechRecognition();
+keywordRecognition.interimResults = true;
+keywordRecognition.lang = 'en-US';
+
+// This flag will track whether we are in the active listening phase
+let activeListening = false;
+
+// Start listening for "Hello UPI" first
+keywordRecognition.addEventListener('result', e => {
+    const transcript = Array.from(e.results)
+        .map(result => result[0])
+        .map(result => result.transcript)
+        .join('')
+        .toLowerCase();
+
+    if (transcript.includes('hello upi') && e.results[0].isFinal) {
+        // "Hello UPI" detected, activate voice recognition for command
+        document.getElementById('messages').innerHTML += `<p>System: Listening for your command...</p>`;
+        keywordRecognition.stop(); // Stop listening for the keyword
+        startCommandRecognition(); // Start listening for the actual command
+    }
+});
+
+// Start listening for commands once "Hello UPI" is triggered
+function startCommandRecognition() {
+    activeListening = true;
+    recognition.start();
+}
+
 // Recognize speech and process the command
 recognition.addEventListener('result', e => {
+    if (!activeListening) return;
+
     const transcript = Array.from(e.results)
         .map(result => result[0])
         .map(result => result.transcript)
         .join('');
-    
+
     // Display the transcript in chat input
     document.getElementById('chatInput').value = transcript;
 
     if (e.results[0].isFinal) {
         // Once the speech recognition is complete, process the command
         handleCommand(transcript);
-        recognition.stop(); // Stop voice recognition after final result
+        recognition.stop(); // Stop voice recognition after the command
+        activeListening = false; // Reset the active listening flag
+
+        // Resume listening for "Hello UPI" after command is processed
+        keywordRecognition.start();
     }
 });
 
-// Comment out or remove the continuous listening event
-// recognition.addEventListener('end', recognition.start);
-
-// Start listening for voice input initially
-recognition.start();
+// Initially, continuously listen for the "Hello UPI" keyword
+keywordRecognition.start();
 
 // Step 2: Parse the voice command and extract amount and person
 function handleCommand(command) {
@@ -103,3 +136,28 @@ function verifyPin() {
         alert('Incorrect pin');
     }
 }
+
+// // script.js
+// const correctPin = "1234"; // Set your correct PIN here
+
+// function addDigit(digit) {
+//     const pinInput = document.getElementById("pinInput");
+//     if (pinInput.value.length < 4) {
+//         pinInput.value += digit;
+//     }
+// }
+
+// function clearPin() {
+//     const pinInput = document.getElementById("pinInput");
+//     pinInput.value = "";
+// }
+
+// function verifyPin() {
+//     const pinInput = document.getElementById("pinInput").value;
+//     if (pinInput === correctPin) {
+//         alert("PIN Verified Successfully!");
+//     } else {
+//         alert("Incorrect PIN. Please try again.");
+//         clearPin();
+//     }
+// }
