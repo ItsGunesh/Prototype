@@ -29,6 +29,29 @@
             </div>
         </div>
     </div>
+
+    <!-- Numpad and PIN Input -->
+    <div class="pin-overlay" id="pinOverlay">
+        <div class="pin-container">
+            <h2>Enter Your PIN</h2>
+            <input type="password" id="pinInput" maxlength="4" placeholder="Enter PIN" readonly>
+            <div class="numpad">
+                <button onclick="enterPin(1)">1</button>
+                <button onclick="enterPin(2)">2</button>
+                <button onclick="enterPin(3)">3</button>
+                <button onclick="enterPin(4)">4</button>
+                <button onclick="enterPin(5)">5</button>
+                <button onclick="enterPin(6)">6</button>
+                <button onclick="enterPin(7)">7</button>
+                <button onclick="enterPin(8)">8</button>
+                <button onclick="enterPin(9)">9</button>
+                <button onclick="clearPin()">Clear</button>
+                <button onclick="enterPin(0)">0</button>
+            </div>
+            <button class="submit-btn" onclick="verifyPin()">Submit</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
