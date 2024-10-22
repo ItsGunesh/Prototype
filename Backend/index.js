@@ -9,27 +9,43 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Razorpay credentials
 const key_id = process.env.RAZORPAY_KEY_ID;
-console.log(key_id);
+const key_secret = process.env.RAZORPAY_KEY_SECRET;
+console.log('Razorpay Key ID:', key_id);
 
 // Middleware setup
 app.use(cors());
 app.use(bodyParser.json());
 
-// Function to check if contact exists on Razorpay
+// Sample PIN for demonstration purposes (In real systems, securely manage PINs)
+const userPin = '1234'; 
+
+// Step 1: Verify PIN before proceeding
+app.post('/verifyPin', (req, res) => {
+    const { pin } = req.body;
+
+    if (pin === userPin) {
+        res.json({ success: true, message: 'PIN Verified' });
+    } else {
+        res.status(401).json({ success: false, message: 'Incorrect PIN' });
+    }
+});
+
+// Step 2: Check if contact exists on Razorpay
 const checkContactExists = async (person) => {
     try {
         const response = await axios.get('https://api.razorpay.com/v1/fund_accounts', {
             auth: {
-                username: process.env.RAZORPAY_KEY_ID,
-                password: process.env.RAZORPAY_KEY_SECRET
+                username: key_id,
+                password: key_secret
             }
         });
 
-        let contacts = response.data.items;
+        const contacts = response.data.items;
 
-        // Find contact by comparing the person's name with both bank account and wallet names
-        let contact = contacts.find(c => {
+        // Find contact by matching person's name in bank account or wallet
+        const contact = contacts.find(c => {
             if (c.account_type === 'bank_account' && c.bank_account && c.bank_account.name.toLowerCase() === person.toLowerCase()) {
                 return true;
             }
@@ -39,7 +55,6 @@ const checkContactExists = async (person) => {
             return false;
         });
 
-        // Return the ID if contact found, otherwise return null
         return contact ? contact.id : null;
     } catch (error) {
         console.error('Error checking contact:', error);
@@ -47,21 +62,19 @@ const checkContactExists = async (person) => {
     }
 };
 
-// Route to process payment
+// Step 3: Process payment
 app.post('/processPayment', async (req, res) => {
     const { amount, person } = req.body;
 
     // Check if contact exists
-    let contactId = await checkContactExists(person);
+    const contactId = await checkContactExists(person);
     console.log('Contact ID:', contactId);
 
-    
-
     if (!contactId) {
-        return res.json({ success: false, message: `Contact ${person} does not exist.` });
+        return res.status(404).json({ success: false, message: `Contact ${person} does not exist.` });
     }
 
-    const fid = contactId;
+    const fundAccountId = contactId;
 
     // If contact exists, initiate payout
     try {
@@ -69,27 +82,27 @@ app.post('/processPayment', async (req, res) => {
             method: 'POST',
             url: 'https://api.razorpay.com/v1/payouts',
             auth: {
-                username: process.env.RAZORPAY_KEY_ID,
-                password: process.env.RAZORPAY_KEY_SECRET
+                username: key_id,
+                password: key_secret
             },
             data: {
                 account_number: process.env.ACCOUNT_NUMBER,
-                fund_account_id: fid,
-                amount: amount*100,
-                currency: "INR",
-                mode: "NEFT",
-                purpose: "refund",
+                fund_account_id: fundAccountId,
+                amount: amount * 100, // Amount in paisa (smallest unit)
+                currency: 'INR',
+                mode: 'NEFT', // Can be changed to IMPS, RTGS, etc.
+                purpose: 'refund',
                 queue_if_low_balance: true, 
-                reference_id: "Acme Transaction ID 12345",
-                narration: "Acme Corp Fund Transfer",
-                notes:{
-                  random_key_1: "Make it so.",
-                  random_key_2: "Tea. Earl Grey. Hot."
+                reference_id: `Txn-${Date.now()}`, // Unique reference ID
+                narration: 'Payment Transfer',
+                notes: {
+                    note1: 'Important note',
+                    note2: 'Transaction details'
                 }
             }
         });
 
-        console.log("Payment Response:", payoutResponse.data);
+        console.log('Payment Response:', payoutResponse.data);
         res.json({
             success: true,
             message: `₹${amount} sent to ${person} successfully.`,
