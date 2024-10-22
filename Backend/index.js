@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 // Razorpay credentials
 const key_id = process.env.RAZORPAY_KEY_ID;
 const key_secret = process.env.RAZORPAY_KEY_SECRET;
-console.log('Razorpay Key ID:', key_id);
+// console.log('Razorpay Key ID:', key_id);
 
 // Middleware setup
 app.use(cors());
@@ -68,13 +68,14 @@ app.post('/processPayment', async (req, res) => {
 
     // Check if contact exists
     const contactId = await checkContactExists(person);
-    console.log('Contact ID:', contactId);
+    // console.log('Contact ID:', contactId);
 
     if (!contactId) {
         return res.status(404).json({ success: false, message: `Contact ${person} does not exist.` });
     }
 
     const fundAccountId = contactId;
+    // console.log("amount :" ,amount)
 
     // If contact exists, initiate payout
     try {
@@ -102,7 +103,7 @@ app.post('/processPayment', async (req, res) => {
             }
         });
 
-        console.log('Payment Response:', payoutResponse.data);
+        // console.log('Payment Response:', payoutResponse.data);
         res.json({
             success: true,
             message: `₹${amount} sent to ${person} successfully.`,
