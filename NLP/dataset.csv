@@ -1,0 +1,49 @@
+sentence,label
+send 10 rs to girish,1
+send 100 rs to rishi,1
+send 100 rs to Alice,1
+transfer 200 dollars to Bob,1
+give 50 rupees to Charlie,1
+dispatch 300 dollars to Dave,1
+wire 150 rs to Eve,1
+forward 75 rs to Frank,1
+pay 10 rupees to Grace,1
+settle the bill with Jack for 100 rs,1
+buy 50 dollars of goods from Karen,1
+pay 50 rs to Lila,1
+transfer 500 rs to Rohan,1
+send 2000 rupees to Sophia,1
+settle the bill with Mia for 500 dollars,1
+pay Grace 10 dollars now,1
+send rs 100 to Alice,1
+transfer rs 200 to Bob,1
+give rupees 50 to Charlie,1
+dispatch dollars 300 to Dave,1
+wire rs 150 to Eve,1
+forward rupees 75 to Frank,1
+pay rupees 10 to Grace,1
+send rs 500 to Michael,1
+pay dollars 20 to Steve,1
+transfer rupees 600 to Rahul,1
+send dollars 150 to Tina,1
+pay rupees 40 to Uma,1
+dispatch rs 80 to Vicky,1
+wire dollars 90 to Walter,1
+forward rupees 30 to Xander,1
+pay rs 200 to Yasmine,1
+send dollars 500 to Zach,1
+transfer rupees 700 to Bella,1
+pay dollars 60 to Chris,1
+forward rupees 90 to Diana,1
+wire rs 300 to Ed,1
+dispatch dollars 70 to Faye,1
+send rupees 80 to Gina,1
+pay rs 20 to Harry,1
+transfer dollars 250 to Isla,1
+send rs 100 to John,1
+pay dollars 30 to Kim,1
+forward rupees 200 to Leo,1
+wire rs 90 to Mary,1
+dispatch dollars 50 to Nina,1
+send rupees 70 to Oscar,1
+pay rs 10 to Paul,1
